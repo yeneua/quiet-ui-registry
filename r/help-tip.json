@@ -1,0 +1,18 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "help-tip",
+  "description": "필드명에 점선 밑줄 + 설명 툴팁. 앱 루트에 TooltipProvider 필요.",
+  "registryDependencies": [
+    "@quiet/theme",
+    "@quiet/utils",
+    "@quiet/tooltip"
+  ],
+  "files": [
+    {
+      "path": "src/shared/components/HelpTip.tsx",
+      "content": "import { cloneElement, isValidElement, type ReactElement, type ReactNode } from \"react\";\nimport { Tooltip, TooltipContent, TooltipTrigger } from \"@/shared/ui/tooltip\";\nimport { cn } from \"@/shared/lib/utils\";\n\ninterface Props {\n  text: string;\n  children: ReactNode;\n}\n\n// \"설명 툴팁 있음\" 표시 = 점선 밑줄. 트리거 children 에 자동으로 입힌다.\nconst HINT_UNDERLINE = \"underline decoration-dotted decoration-foreground-subtle/50 underline-offset-4\";\n\n// 필드명 등에 감싸 커서를 올리면(지연 후) 설명 툴팁을 띄운다.\n// 지연시간은 앱 루트 TooltipProvider 의 delayDuration 으로 제어.\nexport const HelpTip = ({ text, children }: Props) => {\n  const trigger = isValidElement<{ className?: string }>(children)\n    ? cloneElement(children as ReactElement<{ className?: string }>, {\n        className: cn(children.props.className, HINT_UNDERLINE),\n      })\n    : children;\n\n  return (\n    <Tooltip>\n      <TooltipTrigger asChild>{trigger}</TooltipTrigger>\n      <TooltipContent className=\"max-w-xs text-xs leading-relaxed\">{text}</TooltipContent>\n    </Tooltip>\n  );\n};\n",
+      "type": "registry:component"
+    }
+  ],
+  "type": "registry:component"
+}

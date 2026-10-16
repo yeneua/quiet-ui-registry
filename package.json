@@ -1,0 +1,12 @@
+{
+  "name": "quiet-ui-registry",
+  "private": true,
+  "version": "0.1.0",
+  "scripts": {
+    "build": "shadcn build --output r",
+    "serve": "node serve.cjs"
+  },
+  "devDependencies": {
+    "shadcn": "4.21.0"
+  }
+}

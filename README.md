@@ -77,6 +77,38 @@
 npx shadcn@4.21.0 add @quiet/button --overwrite
 ```
 
+## 정적 HTML·다른 프레임워크에서 쓰기 (CSS)
+
+React나 Tailwind 없이 CSS 파일 하나로 같은 디자인을 씁니다. 정적 HTML, Vue, Svelte, 서버 템플릿 어디서든 동작합니다.
+
+```html
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/yeneua/quiet-ui-registry@v0.1.0/dist/quiet.css">
+```
+
+- 색 토큰과 Pretendard 폰트가 함께 들어 있습니다. 다크 모드는 `<html class="dark">`로 켭니다.
+- 모든 예시는 [`demo/index.html`](demo/index.html)에 있습니다. 브라우저로 열어 보세요.
+- 주소의 `@v0.1.0`은 git 태그입니다. `@main`을 쓰면 최신을 받지만 jsDelivr가 최대 12시간 캐시합니다.
+
+| 컴포넌트 | 마크업 | 변형 |
+| --- | --- | --- |
+| button | `<button class="q-btn">` (`<a>`도 가능) | `q-btn--secondary` `--outline` `--ghost` `--link` `--destructive` / 크기 `--xs` `--sm` `--lg` `--icon` `--icon-xs` `--icon-sm` `--icon-lg` |
+| badge | `<span class="q-badge">` | `q-badge--secondary` `--outline` `--ghost` `--link` `--destructive` |
+| card | `.q-card` > `.q-card__header`(`__title` `__description` `__action`) `.q-card__content` `.q-card__footer` | |
+| input · textarea | `<input class="q-input">` `<textarea class="q-textarea">` | 오류: `aria-invalid="true"` |
+| label | `<label class="q-label">` | |
+| select | `<select class="q-select">` (브라우저 기본 드롭다운) | `q-select--sm` |
+| switch | `<input type="checkbox" role="switch" class="q-switch">` | `q-switch--sm` |
+| table | `.q-table-container` > `<table class="q-table">` | 선택 행: `<tr data-state="selected">` |
+| dialog | `<dialog class="q-dialog">` > `.q-dialog__header`(`__title` `__description`) `.q-dialog__footer` `.q-dialog__close` | |
+| tooltip | `.q-tooltip` > 트리거 + `<span class="q-tooltip__content" role="tooltip">` | |
+| help-tip | `.q-tooltip.q-help-tip` (점선 밑줄) | |
+
+동작은 브라우저 기본 기능에 맡깁니다.
+
+- **dialog**: `dialog.showModal()`로 엽니다. 버튼을 `<form method="dialog">` 안에 두면 누를 때 닫힙니다(`demo` 참고).
+- **tooltip**: 마우스를 올리거나 키보드로 포커스하면 위쪽에 뜹니다. 스크롤 컨테이너(`overflow: hidden/auto`) 안에서는 잘릴 수 있고, 화면 끝에서 자동으로 위치를 바꾸지 않습니다. 뜨는 지연시간은 `--q-tooltip-delay`로 정합니다(예: `:root { --q-tooltip-delay: 300ms }`).
+- **select**: 펼쳐지는 목록은 브라우저 기본 모양입니다.
+
 ## 디자인 수정하기
 
 1. 처음 한 번 의존성을 설치합니다.
@@ -89,8 +121,11 @@ npx shadcn@4.21.0 add @quiet/button --overwrite
    - 컴포넌트: `src/shared/ui/`, `src/shared/components/`
    - 색·폰트·base 스타일: `registry.json`의 `theme` 항목(`cssVars`, `css`)
    - 새 컴포넌트: 파일을 `src/shared/` 아래에 두고 `registry.json`의 `items`에 항목을 추가
+   - CSS판 컴포넌트: `src/css/components.css` (색·폰트 토큰은 위 `theme` 항목을 그대로 가져다 씁니다)
 
-3. 빌드합니다. `registry.json`과 `src/`를 읽어 `r/*.json`을 만듭니다.
+   React 컴포넌트와 CSS판은 따로 작성되어 있으니, 모양을 바꿀 때는 양쪽을 함께 고쳐주세요.
+
+3. 빌드합니다. `registry.json`과 `src/`를 읽어 `r/*.json`과 `dist/quiet.css`를 만듭니다.
 
    ```bash
    npm run build
@@ -102,7 +137,9 @@ npx shadcn@4.21.0 add @quiet/button --overwrite
    npm run serve
    ```
 
-5. `r/`까지 함께 커밋하고 push합니다. raw URL은 몇 분 동안 캐시되므로, push 직후에는 예전 내용이 받아질 수 있습니다.
+   CSS판은 `demo/index.html`을 브라우저로 열어 확인합니다.
+
+5. `r/`와 `dist/`까지 함께 커밋하고 push합니다. raw URL은 몇 분 동안 캐시되므로, push 직후에는 예전 내용이 받아질 수 있습니다.
 
    ```bash
    git add -A
@@ -114,6 +151,16 @@ npx shadcn@4.21.0 add @quiet/button --overwrite
 
    ```bash
    git push
+   ```
+
+6. CSS판을 새 버전으로 내보낼 때는 `package.json`의 `version`을 올린 뒤 빌드·커밋하고, 같은 이름의 태그를 push합니다. CDN 주소의 `@v0.1.0` 부분을 새 태그로 바꾸면 그 버전을 받습니다.
+
+   ```bash
+   git tag v0.1.0
+   ```
+
+   ```bash
+   git push origin v0.1.0
    ```
 
 저장소 주소나 이름이 바뀌면 `registry.json`의 `homepage`와 위 `registries` 예시의 URL도 함께 바꿔주세요.
